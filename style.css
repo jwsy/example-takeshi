@@ -307,3 +307,19 @@ header h1 {
   color: #888;
   line-height: 1;
 }
+
+/* ── Confetti ── */
+.confetti-particle {
+  position: fixed;
+  bottom: -10px;
+  z-index: 300;
+  pointer-events: none;
+  user-select: none;
+  animation: confetti-rise 1.2s ease-out forwards;
+}
+
+@keyframes confetti-rise {
+  0%   { transform: translateY(0) rotate(0deg); opacity: 1; }
+  80%  { opacity: 1; }
+  100% { transform: translateY(-100vh) rotate(720deg); opacity: 0; }
+}
