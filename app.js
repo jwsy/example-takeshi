@@ -129,12 +129,16 @@
 
     const result = score(currentGuess, answer);
     guessHistory.push({ word: currentGuess, result });
-    revealRow(currentRow, result, () => {
-      updateKeyboard(currentGuess, result);
-      if (currentGuess === answer) {
+
+    const submittedGuess = currentGuess;
+    const submittedRow = currentRow;
+
+    revealRow(submittedRow, result, () => {
+      updateKeyboard(submittedGuess, result);
+      if (submittedGuess === answer) {
         gameOver = true;
-        setTimeout(() => showResult(true), 400);
-      } else if (currentRow === MAX_ROWS - 1) {
+        setTimeout(() => { launchConfetti(); showResult(true); }, 400);
+      } else if (submittedRow === MAX_ROWS - 1) {
         gameOver = true;
         setTimeout(() => showResult(false), 400);
       }
@@ -219,11 +223,28 @@
 
   // ── Result modal ───────────────────────────────────────
   function showResult(won) {
-    const msgs = ['Genius!', 'Magnificent!', 'Impressive!', 'Splendid!', 'Great!', 'Phew!'];
-    resultTitle.textContent = won ? msgs[currentRow - 1] || 'Nice!' : 'Game Over';
-    resultMsg.textContent = won ? `You got it in ${currentRow} ${currentRow===1?'guess':'guesses'}!` : 'The word was:';
+    const msgs = ['🏆 Genius!', '🌟 Magnificent!', '✨ Impressive!', '🎉 Splendid!', '👏 Great!', '😅 Phew!'];
+    resultTitle.textContent = won ? msgs[currentRow - 1] || '🎊 Nice!' : 'Game Over';
+    resultMsg.textContent = won
+      ? `You got it in ${currentRow} ${currentRow===1?'guess':'guesses'}! 🎊`
+      : 'The word was:';
     answerEl.textContent = won ? '' : answer.toUpperCase();
     resultModal.classList.add('open');
+  }
+
+  function launchConfetti() {
+    const emojis = ['🎉', '🎊', '⭐', '🌟', '✨', '🎈', '🏆', '🥳'];
+    for (let i = 0; i < 24; i++) {
+      const el = document.createElement('div');
+      el.className = 'confetti-particle';
+      el.textContent = emojis[i % emojis.length];
+      el.style.left = (Math.random() * 100) + 'vw';
+      el.style.fontSize = (18 + Math.random() * 14) + 'px';
+      el.style.animationDuration = (1 + Math.random() * 0.8) + 's';
+      el.style.animationDelay = (Math.random() * 0.5) + 's';
+      document.body.appendChild(el);
+      el.addEventListener('animationend', () => el.remove(), { once: true });
+    }
   }
 
   shareBtn.addEventListener('click', () => {
